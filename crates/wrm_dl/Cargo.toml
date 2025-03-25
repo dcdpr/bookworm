@@ -1,0 +1,21 @@
+[package]
+edition = "2021"
+name = "wrm_dl"
+version = "0.1.0"
+
+[dependencies]
+clap = { workspace = true, optional = true }
+reqwest = { workspace = true }
+semver = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, optional = true }
+url = { workspace = true }
+
+zip = { version = "2", default-features = false, features = ["bzip2"] }
+
+[features]
+cli = ["dep:clap", "dep:tokio"]
+
+[[bin]]
+name = "wrm-dl"
+required-features = ["cli"]

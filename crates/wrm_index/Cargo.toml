@@ -1,0 +1,20 @@
+[package]
+edition = "2021"
+name = "wrm_index"
+version = "0.1.0"
+
+[dependencies]
+clap = { workspace = true, optional = true }
+dom_query = { workspace = true }
+rusqlite = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, optional = true }
+
+[features]
+cli = ["dep:clap", "dep:tokio"]
+
+[[bin]]
+name = "wrm-index"
+required-features = ["cli"]

@@ -1,0 +1,32 @@
+[package]
+edition = "2021"
+name = "wrm_mcp"
+version = "0.1.0"
+
+[dependencies]
+wrm_dl = { path = "../wrm_dl" }
+wrm_index = { path = "../wrm_index" }
+wrm_query = { path = "../wrm_query" }
+
+clap = { workspace = true }
+reqwest = { workspace = true, features = ["json"] }
+schemars = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+url = { workspace = true }
+
+garde = { version = "0.22", features = ["derive", "url", "regex"] }
+indoc = "2"
+lazy_static = "1"
+mcp-core = { git = "https://github.com/modelcontextprotocol/rust-sdk" }
+mcp-server = { git = "https://github.com/modelcontextprotocol/rust-sdk" }
+quick-xml = { version = "0.37", features = ["serialize"] }
+regex = { version = "1" }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[[bin]]
+name = "wrm-mcp"
+path = "src/main.rs"

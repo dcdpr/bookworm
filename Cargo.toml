@@ -1,0 +1,29 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.dependencies]
+wrm_dl = { path = "crates/wrm_dl" }
+wrm_docs = { path = "crates/wrm_docs" }
+wrm_index = { path = "crates/wrm_index" }
+wrm_query = { path = "crates/wrm_query" }
+
+clap = { version = "4", features = ["derive"] }
+dom_query = { version = "0.16" }
+html2text = { version = "0.14" }
+reqwest = { version = "0.12", default-features = false, features = [
+    "rustls-tls",
+] }
+rusqlite = { version = "0.34", features = ["bundled", "array"] }
+schemars = { version = "1.0.0-alpha.17", default-features = false, features = [
+    "preserve_order",
+    "schemars_derive",
+    "std",
+    "url2",
+] }
+semver = { version = "1" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1" }
+thiserror = { version = "2", default-features = false, features = ["std"] }
+tokio = { version = "1", features = ["macros"] }
+url = { version = "2", features = ["serde"] }

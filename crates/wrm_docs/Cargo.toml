@@ -1,0 +1,12 @@
+[package]
+description = "Fetch details from locally cached docs.rs documentation."
+edition = "2024"
+name = "wrm_docs"
+version = "0.1.0"
+
+[dependencies]
+dom_query = { workspace = true }
+rusqlite = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+url = { workspace = true }
