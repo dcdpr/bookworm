@@ -1,11 +1,9 @@
-use std::path::PathBuf;
-
 use garde::Validate;
 use mcp_core::Content;
 use schemars::JsonSchema;
 use serde_json::Value;
 
-use super::{CrateResource, CrateUri, PathRoot};
+use super::{CrateResource, CrateUri};
 use crate::{error::Error, tool::CRATE_VERSION_RE};
 
 /// # crate_readme
@@ -35,15 +33,12 @@ fn default_crate_version() -> Option<String> {
 
 impl CrateReadme {
     pub async fn run(&self) -> Result<Vec<Content>, Error> {
-        let uri = CrateUri {
-            name: self.crate_name.clone(),
-            version: self.crate_version.clone(),
-            root: Some(PathRoot::Readme),
-            path: PathBuf::new(),
-            fragment: None,
-        };
+        let uri = CrateUri::readme(
+            &self.crate_name,
+            self.crate_version.as_deref().unwrap_or("latest"),
+        );
 
-        CrateResource::new(&uri).run().await
+        CrateResource::new(uri).run().await
     }
 }
 
@@ -60,8 +55,7 @@ impl TryFrom<Value> for CrateReadme {
         let crate_version = args
             .get("crate_version")
             .and_then(Value::as_str)
-            .map(ToOwned::to_owned)
-            .to_owned();
+            .map(ToOwned::to_owned);
 
         let this = Self {
             crate_name,

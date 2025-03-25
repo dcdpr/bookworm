@@ -91,8 +91,8 @@ impl TryFromSchema for Tool {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-struct CrateUri {
+#[derive(Debug, Clone, PartialEq, JsonSchema)]
+pub(crate) struct CrateUri {
     pub name: String,
     pub version: Option<String>,
     pub root: Option<PathRoot>,
@@ -101,7 +101,6 @@ struct CrateUri {
 }
 
 impl CrateUri {
-    #[expect(dead_code)]
     fn versions(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -233,8 +232,8 @@ impl TryFrom<&Url> for CrateUri {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-enum PathRoot {
+#[derive(Debug, Clone, Copy, PartialEq, JsonSchema)]
+pub(crate) enum PathRoot {
     Readme,
     Items,
     Src,

@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use garde::Validate;
 use mcp_core::Content;
 use schemars::JsonSchema;
@@ -22,15 +20,9 @@ pub struct CrateVersions {
 
 impl CrateVersions {
     pub async fn run(&self) -> Result<Vec<Content>, Error> {
-        let uri = CrateUri {
-            name: self.crate_name.clone(),
-            version: None,
-            root: None,
-            path: PathBuf::new(),
-            fragment: None,
-        };
+        let uri = CrateUri::versions(&self.crate_name);
 
-        CrateResource::new(&uri).run().await
+        CrateResource::new(uri).run().await
     }
 }
 

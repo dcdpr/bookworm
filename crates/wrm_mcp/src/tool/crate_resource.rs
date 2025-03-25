@@ -1,3 +1,5 @@
+use std::str::FromStr as _;
+
 use garde::Validate;
 use mcp_core::Content;
 use schemars::JsonSchema;
@@ -26,35 +28,33 @@ use crate::{
 pub struct CrateResource {
     /// Crate resource URI.
     #[garde(skip)]
-    uri: Url,
+    uri: CrateUri,
 }
 
 impl CrateResource {
-    pub fn new(uri: impl Into<Url>) -> Self {
+    pub(crate) fn new(uri: impl Into<CrateUri>) -> Self {
         Self { uri: uri.into() }
     }
 
     pub async fn run(&self) -> Result<Vec<Content>, Error> {
-        let krate = CrateUri::try_from(&self.uri)?;
-
-        let Some(version) = &krate.version else {
-            return versions_handler(&krate.name).await;
+        let Some(version) = &self.uri.version else {
+            return versions_handler(&self.uri.name).await;
         };
 
-        let Some(root) = &krate.root else {
-            return metadata_handler(&krate.name, version).await;
+        let Some(root) = &self.uri.root else {
+            return metadata_handler(&self.uri.name, version).await;
         };
 
         match root {
-            PathRoot::Readme => readme_handler(&krate.name, version).await,
-            PathRoot::Items if krate.path.as_os_str().is_empty() => {
-                list_items_handler(&krate.name, version).await
+            PathRoot::Readme => readme_handler(&self.uri.name, version).await,
+            PathRoot::Items if self.uri.path.as_os_str().is_empty() => {
+                list_items_handler(&self.uri.name, version).await
             }
-            PathRoot::Items => item_resource_handler(&krate).await,
-            PathRoot::Src if krate.path.as_os_str().is_empty() => {
-                list_src_handler(&krate.name, version).await
+            PathRoot::Items => item_resource_handler(&self.uri).await,
+            PathRoot::Src if self.uri.path.as_os_str().is_empty() => {
+                list_src_handler(&self.uri.name, version).await
             }
-            PathRoot::Src => src_resource_handler(&krate).await,
+            PathRoot::Src => src_resource_handler(&self.uri).await,
         }
     }
 }
@@ -159,7 +159,9 @@ impl TryFrom<Value> for CrateResource {
             .and_then(Value::as_str)
             .ok_or_else(|| Error::MissingParameter("uri"))?;
 
-        let this = Self { uri: uri.parse()? };
+        let this = Self {
+            uri: CrateUri::try_from(&Url::from_str(uri)?)?,
+        };
 
         this.validate()?;
 
@@ -332,7 +334,8 @@ mod tests {
         test_cases.insert("invalid root path", TestCase {
             uri: "crate://serde_json/1.0.0/invalid/value.rs",
             expected: Err(Error::InvalidResourceUri(
-                "Unexpected path root: invalid".to_owned(),
+                "Unexpected path root: invalid, must be one of 'readme', 'items', or 'src'"
+                    .to_owned(),
             )),
         });
 
@@ -346,7 +349,7 @@ mod tests {
         test_cases.insert("invalid path root", TestCase {
             uri: "crate://serde_json//",
             expected: Err(Error::InvalidResourceUri(
-                "Unexpected path root: ".to_owned(),
+                "Unexpected path root: , must be one of 'readme', 'items', or 'src'".to_owned(),
             )),
         });
 
