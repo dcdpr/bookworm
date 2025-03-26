@@ -80,6 +80,7 @@ pub fn index(config: Config) -> Result<(), Error> {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, JsonSchema)]
 pub enum EntryType {
     Constant,
+    Derive,
     Enum,
     Function,
     Macro,
@@ -96,6 +97,7 @@ impl EntryType {
     pub fn all() -> Vec<EntryType> {
         vec![
             EntryType::Constant,
+            EntryType::Derive,
             EntryType::Enum,
             EntryType::Function,
             EntryType::Macro,
@@ -114,6 +116,7 @@ impl fmt::Display for EntryType {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), std::fmt::Error> {
         match self {
             EntryType::Constant => write!(f, "Constant"),
+            EntryType::Derive => write!(f, "Derive"),
             EntryType::Enum => write!(f, "Enum"),
             EntryType::Function => write!(f, "Function"),
             EntryType::Macro => write!(f, "Macro"),
@@ -134,6 +137,7 @@ impl FromStr for EntryType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "constant" => Ok(Self::Constant),
+            "derive" => Ok(Self::Derive),
             "enum" => Ok(Self::Enum),
             "fn" | "function" => Ok(Self::Function),
             "macro" => Ok(Self::Macro),
