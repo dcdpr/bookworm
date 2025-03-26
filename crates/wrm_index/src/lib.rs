@@ -89,6 +89,7 @@ pub enum EntryType {
     Trait,
     Type,
     Variant,
+    Attribute,
 }
 
 impl EntryType {
@@ -104,6 +105,7 @@ impl EntryType {
             EntryType::Trait,
             EntryType::Type,
             EntryType::Variant,
+            EntryType::Attribute,
         ]
     }
 }
@@ -121,6 +123,7 @@ impl fmt::Display for EntryType {
             EntryType::Trait => write!(f, "Trait"),
             EntryType::Type => write!(f, "Type"),
             EntryType::Variant => write!(f, "Variant"),
+            EntryType::Attribute => write!(f, "Attribute"),
         }
     }
 }
@@ -140,6 +143,7 @@ impl FromStr for EntryType {
             "trait" => Ok(Self::Trait),
             "type" => Ok(Self::Type),
             "variant" => Ok(Self::Variant),
+            "attr" | "attribute" => Ok(Self::Attribute),
             _ => Err(Error::UnknownEntryType(s.to_owned())),
         }
     }
